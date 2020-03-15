@@ -6,6 +6,10 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -33,6 +37,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
 
     //variable para guardar un marcado dado por el usuario
     private var listaMarcadores: ArrayList<Marker>? = null
+
+    //Variable para obtener la posiscion de forma local
+    private var miPosicion:LatLng? = null
 
 
 
@@ -143,6 +150,16 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
             //para mover los marcadores que aÒadimos con un click
             listaMarcadores?.last()!!.isDraggable=true
 
+            //coordenadas va a obtener el ultimo marcador
+            val cooredenadas=LatLng(listaMarcadores?.last()!!.position.latitude, listaMarcadores?.last()!!.position.longitude)
+
+            //se manda allamar la URL para hacer la uniion entre las dos corendadas
+
+            val origen = "origin"+ miPosicion?.latitude + "," + miPosicion?.longitude + "&"
+            val destino = "destination="+ cooredenadas.latitude + "," + cooredenadas.longitude + "&"
+            val parametros = origen + destino +"sensor=false&mode=driving"
+
+            cargarURL("http//maps.googleapis.com/maps/api/directions/json?" +parametros )
         }
     }
 
@@ -179,6 +196,24 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
         fusedLocationClient?.removeLocationUpdates(callback)
     }
 
+    //SOLICITUD HTTPS
+    private fun cargarURL(url:String){
+        val queue = Volley.newRequestQueue(this)
+
+        val solicitud = StringRequest(Request.Method.GET, url, Response.Listener<String>{
+
+                response ->
+            Log.d("HTTP",response)
+
+            //METODO HA HACER
+
+
+
+        }, Response.ErrorListener{})
+
+        //aÒadir al quequue la solicitud
+        queue.add(solicitud)
+    }
 
 
     //MARCADORES-------------------------------------------
