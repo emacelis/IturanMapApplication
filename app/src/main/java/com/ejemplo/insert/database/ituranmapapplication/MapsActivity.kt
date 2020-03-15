@@ -51,6 +51,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 for (ubicacion in locationResoult?.locations!!){
                     Toast.makeText(applicationContext,ubicacion.latitude.toString()+","+ubicacion.longitude.toString(),
                         Toast.LENGTH_LONG).show()
+
+                    //Add a marker in Sydney and move the camera
+                 val miPosicion=LatLng(ubicacion.latitude, ubicacion.longitude)
+                    mMap.addMarker(MarkerOptions().position(miPosicion!!).title("Aqui estoy"))
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(miPosicion))
                 }
             }
         }
@@ -69,6 +74,17 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
+
+        //Se carga el metodo desde la inicializacion del mapa
+        //Generaba error al cargaro en el onStart
+        super.onStart()
+
+        if (validarPermisosUbuicacion()){
+            obtenerUbicacion()
+        }
+        else{
+            pedirPermisos()
+        }
 
         // Add a marker in Sydney and move the camera
         val sydney = LatLng(-34.0, 151.0)
@@ -110,19 +126,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
 
-
-
-    //Se crea onStart para obtener la ubicación de inicio y se detiene en onPause
-    override fun onStart() {
-        super.onStart()
-
-        if (validarPermisosUbuicacion()){
-            obtenerUbicacion()
-        }
-        else{
-            pedirPermisos()
-        }
-    }
     override fun onPause() {
         super.onPause()
         detenerActualizaciondeUbicacion()
