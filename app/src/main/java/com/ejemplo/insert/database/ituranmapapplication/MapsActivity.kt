@@ -202,7 +202,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
     //se mapea la respuesta JSON
     private fun obtenerCoordenadas(json:String):PolylineOptions{
         val gson = Gson()
-        val objeto = gson.fromJson(json, com.ejemplo.insert.database.ituranmapapplication.Response::class.java)
+        val objeto = gson.fromJson(json, com.ejemplo.insert.database.Modelos.Response::class.java)
         val puntos =objeto.routes?.get(0)!!.legs?.get(0)!!.steps!!
         var coordenadas=PolylineOptions()
 
