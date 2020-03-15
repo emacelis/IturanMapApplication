@@ -68,11 +68,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
                     mMap.isMyLocationEnabled=true
                     mMap.uiSettings.isMyLocationButtonEnabled=true
                 for (ubicacion in locationResoult?.locations!!){
-                    //Toast.makeText(applicationContext,ubicacion.latitude.toString()+","+ubicacion.longitude.toString(),
-                       // Toast.LENGTH_LONG).show()
-
                     //Add a marker in Sydney and move the camera
-                 val miPosicion=LatLng(ubicacion.latitude, ubicacion.longitude)
+                    miPosicion=LatLng(ubicacion.latitude, ubicacion.longitude)
                     mMap.addMarker(MarkerOptions().position(miPosicion!!).title("Te encuentras aquí"))
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(miPosicion))
                 }
@@ -154,12 +151,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
             val cooredenadas=LatLng(listaMarcadores?.last()!!.position.latitude, listaMarcadores?.last()!!.position.longitude)
 
             //se manda allamar la URL para hacer la uniion entre las dos corendadas
-
-            val origen = "origin"+ miPosicion?.latitude + "," + miPosicion?.longitude + "&"
-            val destino = "destination="+ cooredenadas.latitude + "," + cooredenadas.longitude + "&"
+            val origen = "origin="+ miPosicion?.latitude + "," + miPosicion?.longitude + "&"
+            val destino = "destination="+cooredenadas.latitude + "," + cooredenadas.longitude + "&"
             val parametros = origen + destino +"sensor=false&mode=driving"
 
-            cargarURL("http//maps.googleapis.com/maps/api/directions/json?" +parametros )
+            Log.d("URL","http://maps.googleapis.com/maps/api/directions/json?" +parametros)
+            cargarURL("http://maps.googleapis.com/maps/api/directions/json?" +parametros )
         }
     }
 
@@ -207,11 +204,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
 
             //METODO HA HACER
 
-
-
         }, Response.ErrorListener{})
 
-        //aÒadir al quequue la solicitud
+        //añadir al quequue la solicitud
         queue.add(solicitud)
     }
 
