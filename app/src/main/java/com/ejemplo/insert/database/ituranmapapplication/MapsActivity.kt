@@ -18,6 +18,7 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.PolylineOptions
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerClickListener,GoogleMap.OnMarkerDragListener {
 
@@ -103,6 +104,20 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
 
         //funcion para preparar los marcadores
         prepararMarcadores()
+    }
+
+
+    //POLYLINE------------------
+    private fun dibujarLineas() {
+
+        //Se importaPolylineOptions
+        val coordenadasLineas= PolylineOptions()
+            .add(LatLng(19.43420011141154, -99.147705696523))
+            .add(LatLng(19.44120011141154, -99.146705696582))
+            .add(LatLng(19.44400011141154, -99.140705696582))
+            .add(LatLng(19.43720011141154, -99.137705696582))
+
+            mMap.addPolyline(coordenadasLineas)
     }
 
     private fun Listeners() {
