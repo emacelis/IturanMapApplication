@@ -15,9 +15,11 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 
-class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
+class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerClickListener {
+
 
     //VARIABLES PARA LA UBICACION
     private val permisoFineLocation=android.Manifest.permission.ACCESS_FINE_LOCATION
@@ -26,6 +28,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     var fusedLocationClient: FusedLocationProviderClient?=null//permiso para pedir la Latitud
     var locationRequest: LocationRequest?=null
     var callback: LocationCallback?=null
+
+    //variable para guardar un marcado dado por el usuario
+    private var listaMarcadores: ArrayList<Marker>? = null
+
 
 
     private lateinit var mMap: GoogleMap
@@ -84,6 +90,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         //Generaba error al cargaro en el onStart
         super.onStart()
 
+
         if (validarPermisosUbuicacion()){
             obtenerUbicacion()
         }
@@ -91,10 +98,23 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             pedirPermisos()
         }
 
-        // Add a marker in Sydney and move the camera
-        val sydney = LatLng(-34.0, 151.0)
-        mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+        //funcion para preparar los marcadores
+        prepararMarcadores()
+    }
+
+    private fun prepararMarcadores() {
+        listaMarcadores=ArrayList()
+
+        //se ocupa onLongClickListener porque es lo mejor para los mapas ya que pueden tener diferentes tipos de listener
+        mMap.setOnMapLongClickListener {
+                location:LatLng? ->
+
+            listaMarcadores?.add(mMap.addMarker(MarkerOptions()
+                .position(location!!)
+                .title("Tu marcador"))
+            )
+
+        }
     }
 
     private fun validarPermisosUbuicacion(): Boolean {
@@ -131,6 +151,21 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
 
+    override fun onMarkerClick(p0: Marker?): Boolean {
+        var numerodeClick = p0?.tag as? Int
+
+        if(numerodeClick!= null){
+            numerodeClick++
+            p0?.tag=numerodeClick
+            Toast.makeText(this, "se han dado" +numerodeClick.toString()+ "clciks", Toast.LENGTH_SHORT).show()
+        }
+
+        return false
+    }
+
+
+
+    //-------------------------------------------------------
     override fun onPause() {
         super.onPause()
         detenerActualizaciondeUbicacion()
