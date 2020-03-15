@@ -49,8 +49,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 super.onLocationResult(locationResoult)//location resoult entregar un objeto que tiene un arreglo de las ubcicaciones mas recientes
 
                 for (ubicacion in locationResoult?.locations!!){
-                    Toast.makeText(applicationContext,ubicacion.latitude.toString()+","+ubicacion.longitude.toString(),
-                        Toast.LENGTH_LONG).show()
+                    //Toast.makeText(applicationContext,ubicacion.latitude.toString()+","+ubicacion.longitude.toString(),
+                       // Toast.LENGTH_LONG).show()
 
                     //Add a marker in Sydney and move the camera
                  val miPosicion=LatLng(ubicacion.latitude, ubicacion.longitude)
