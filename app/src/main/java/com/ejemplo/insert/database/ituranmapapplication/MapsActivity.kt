@@ -1,8 +1,10 @@
 package com.ejemplo.insert.database.ituranmapapplication
 
+import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -63,6 +65,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
 
+
+
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
@@ -70,5 +74,38 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         val sydney = LatLng(-34.0, 151.0)
         mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+    }
+
+    private fun validarPermisosUbuicacion(): Boolean {
+        val hayUbicacionPrecisa=
+            ActivityCompat.checkSelfPermission(this,permisoFineLocation)== PackageManager.PERMISSION_GRANTED//checkSelfPermission es para
+        //verificar servicios entre si
+        val hayubicacionOrdinaria=
+            ActivityCompat.checkSelfPermission(this,permisoCoarseLocation)== PackageManager.PERMISSION_GRANTED
+        //Se verifican los permisos de la app
+        return hayUbicacionPrecisa && hayubicacionOrdinaria
+    }
+
+    private fun obtenerUbicacion() {
+        fusedLocationClient?.requestLocationUpdates(locationRequest,callback,null)
+    }
+    private fun pedirPermisos() {
+        //shouldShowRequestPermissionRationale si el uduario nego los permisos, se le da un contexto a el usuario porque es enecesario
+        //el permiso
+        val deboProveerContexto=
+            ActivityCompat.shouldShowRequestPermissionRationale(this,permisoFineLocation)
+        if(deboProveerContexto){
+            solicitudPermiso()
+        }
+        else{
+            solicitudPermiso()
+        }
+    }
+    private fun solicitudPermiso() {
+        // Con esto se mapea mi codigo con los servicios
+        requestPermissions(arrayOf(permisoFineLocation,permisoCoarseLocation),CODIGO_SOLICITUD_PERMISO)
+    }
+    private fun detenerActualizaciondeUbicacion() {
+        fusedLocationClient?.removeLocationUpdates(callback)
     }
 }
