@@ -1,6 +1,7 @@
 package com.ejemplo.insert.database.ituranmapapplication
 
 import android.content.pm.PackageManager
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -23,6 +24,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
+import com.google.gson.Gson
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerClickListener,GoogleMap.OnMarkerDragListener {
     //VARIABLES PARA LA UBICACION
@@ -86,13 +88,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
-        //Se carga el metodo desde la inicializacion del mapa
-        //Generaba error al cargaro en el onStart
-        if(validarPermisosUbicacion()){
-            obtenerUbicacion()
-        }else{
-            pedirPermisos()
-        }
 
 
 
@@ -199,6 +194,24 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
 
         //añadir al quequue la solicitud
         queue.add(solicitud)
+    }
+
+
+    //se mapea la respuesta JSON
+    private fun obtenerCoordenadas(json:String):PolylineOptions{
+        val gson = Gson()
+        val objeto = gson.fromJson(json, com.ejemplo.insert.database.ituranmapapplication.Response::class.java)
+        val puntos =objeto.routes?.get(0)!!.legs?.get(0)!!.steps!!
+        var coordenadas=PolylineOptions()
+
+        for(punto in puntos){
+            //coordenadas.add(LatLng(punto.start_location))
+            coordenadas.add(punto.start_location?.toLatLng())
+            coordenadas.add(punto.end_location?.toLatLng())
+        }
+
+        coordenadas.color(Color.BLACK)
+        return coordenadas
     }
 
 
