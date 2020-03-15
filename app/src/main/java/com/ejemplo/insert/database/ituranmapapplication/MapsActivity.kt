@@ -3,6 +3,7 @@ package com.ejemplo.insert.database.ituranmapapplication
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -18,7 +19,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 
-class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerClickListener {
+class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerClickListener,GoogleMap.OnMarkerDragListener {
 
 
     //VARIABLES PARA LA UBICACION
@@ -98,8 +99,18 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
             pedirPermisos()
         }
 
+        Listeners()
+
         //funcion para preparar los marcadores
         prepararMarcadores()
+    }
+
+    private fun Listeners() {
+        //metodo que hace referencia a los marcadores
+        mMap.setOnMarkerClickListener(this)
+        //metodo para aÒadir ubicacion a un nuevo marcador
+        //para esto aÒadimos extends implemts...GoogleMap.OnMarkerDragListener
+        mMap.setOnMarkerDragListener(this)
     }
 
     private fun prepararMarcadores() {
@@ -113,6 +124,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
                 .position(location!!)
                 .title("Tu marcador"))
             )
+
+            //para mover los marcadores que aÒadimos con un click
+            listaMarcadores?.last()!!.isDraggable=true
 
         }
     }
@@ -151,6 +165,22 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
     }
 
 
+
+    //MARCADORES-------------------------------------------
+    override fun onMarkerDragEnd(p0: Marker?) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onMarkerDragStart(p0: Marker?) {
+//variable que nos da el marcador
+        Log.d("MARCADOR INICIAL", p0?.position?.latitude.toString())
+        val index =listaMarcadores?.indexOf(p0!!)    }
+
+    override fun onMarkerDrag(p0: Marker?) {
+        title =p0?.position?.latitude.toString() + "-" +p0?.position?.longitude.toString()
+    }
+
+
     override fun onMarkerClick(p0: Marker?): Boolean {
         var numerodeClick = p0?.tag as? Int
 
@@ -165,7 +195,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
 
 
 
-    //-------------------------------------------------------
+    //CICLO DE VIDA-------------------------------------------------------
     override fun onPause() {
         super.onPause()
         detenerActualizaciondeUbicacion()
