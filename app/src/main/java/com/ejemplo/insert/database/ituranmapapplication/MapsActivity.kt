@@ -25,8 +25,6 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.PolylineOptions
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerClickListener,GoogleMap.OnMarkerDragListener {
-
-
     //VARIABLES PARA LA UBICACION
     private val permisoFineLocation=android.Manifest.permission.ACCESS_FINE_LOCATION
     private val permisoCoarseLocation=android.Manifest.permission.ACCESS_FINE_LOCATION
@@ -40,8 +38,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
 
     //Variable para obtener la posiscion de forma local
     private var miPosicion:LatLng? = null
-
-
 
     private lateinit var mMap: GoogleMap
 
@@ -87,22 +83,19 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
     }
 
 
-
-
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
         //Se carga el metodo desde la inicializacion del mapa
         //Generaba error al cargaro en el onStart
-        super.onStart()
-
-
-        if (validarPermisosUbuicacion()){
+        if(validarPermisosUbicacion()){
             obtenerUbicacion()
-        }
-        else{
+        }else{
             pedirPermisos()
         }
+
+
+
 
         Listeners()
 
@@ -160,14 +153,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
         }
     }
 
-    private fun validarPermisosUbuicacion(): Boolean {
-        val hayUbicacionPrecisa=
-            ActivityCompat.checkSelfPermission(this,permisoFineLocation)== PackageManager.PERMISSION_GRANTED//checkSelfPermission es para
-        //verificar servicios entre si
-        val hayubicacionOrdinaria=
-            ActivityCompat.checkSelfPermission(this,permisoCoarseLocation)== PackageManager.PERMISSION_GRANTED
-        //Se verifican los permisos de la app
-        return hayUbicacionPrecisa && hayubicacionOrdinaria
+    //VALIDAR PERMISOS
+    private fun validarPermisosUbicacion():Boolean{
+        val hayUbicacionPrecisa=ActivityCompat.checkSelfPermission(this,permisoFineLocation)==PackageManager.PERMISSION_GRANTED
+        val hayUbicacionOrdinaria=ActivityCompat.checkSelfPermission(this, permisoCoarseLocation)==PackageManager.PERMISSION_GRANTED
+
+        return hayUbicacionPrecisa && hayUbicacionOrdinaria
     }
 
     private fun obtenerUbicacion() {
@@ -213,13 +204,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
 
     //MARCADORES-------------------------------------------
     override fun onMarkerDragEnd(p0: Marker?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+        val index =listaMarcadores?.indexOf(p0!!)
+        Log.d("MARCADOR FINAL", listaMarcadores?.get(index!!)!!.position?.latitude.toString())    }
 
     override fun onMarkerDragStart(p0: Marker?) {
 //variable que nos da el marcador
         Log.d("MARCADOR INICIAL", p0?.position?.latitude.toString())
-        val index =listaMarcadores?.indexOf(p0!!)    }
+        val index =listaMarcadores?.indexOf(p0!!)
+        Log.d("MARCADOR FINAL", listaMarcadores?.get(index!!)!!.position?.latitude.toString())
+    }
 
     override fun onMarkerDrag(p0: Marker?) {
         title =p0?.position?.latitude.toString() + "-" +p0?.position?.longitude.toString()
@@ -241,6 +234,16 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
 
 
     //CICLO DE VIDA-------------------------------------------------------
+
+    override fun onStart(){
+        super.onStart()
+
+        if(validarPermisosUbicacion()){
+            obtenerUbicacion()
+        }else{
+            pedirPermisos()
+        }
+    }
     override fun onPause() {
         super.onPause()
         detenerActualizaciondeUbicacion()
