@@ -108,4 +108,24 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private fun detenerActualizaciondeUbicacion() {
         fusedLocationClient?.removeLocationUpdates(callback)
     }
+
+
+
+
+    //Se crea onStart para obtener la ubicación de inicio y se detiene en onPause
+    override fun onStart() {
+        super.onStart()
+
+        if (validarPermisosUbuicacion()){
+            obtenerUbicacion()
+        }
+        else{
+            pedirPermisos()
+        }
+    }
+    override fun onPause() {
+        super.onPause()
+        detenerActualizaciondeUbicacion()
+    }
+
 }
