@@ -47,16 +47,21 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
             override fun onLocationResult(locationResoult: LocationResult?) {
                 super.onLocationResult(locationResoult)//location resoult entregar un objeto que tiene un arreglo de las ubcicaciones mas recientes
-
+               //Se verifica si existe el mapa.. se añade boton para obtener ubicación
+                if(mMap!=null){
+                    //boton para obtener la ubicacion
+                    mMap.isMyLocationEnabled=true
+                    mMap.uiSettings.isMyLocationButtonEnabled=true
                 for (ubicacion in locationResoult?.locations!!){
                     //Toast.makeText(applicationContext,ubicacion.latitude.toString()+","+ubicacion.longitude.toString(),
                        // Toast.LENGTH_LONG).show()
 
                     //Add a marker in Sydney and move the camera
                  val miPosicion=LatLng(ubicacion.latitude, ubicacion.longitude)
-                    mMap.addMarker(MarkerOptions().position(miPosicion!!).title("Aqui estoy"))
+                    mMap.addMarker(MarkerOptions().position(miPosicion!!).title("Te encuentras aquí"))
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(miPosicion))
                 }
+            }
             }
         }
     }
