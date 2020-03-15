@@ -20,10 +20,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.gms.maps.model.*
 import com.google.gson.Gson
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerClickListener,GoogleMap.OnMarkerDragListener {
@@ -40,6 +37,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
 
     //Variable para obtener la posiscion de forma local
     private var miPosicion:LatLng? = null
+    //Variable para actualizar  la ubicaicón
+    private var nuevaruta:Polyline?=null
 
     private lateinit var mMap: GoogleMap
 
@@ -184,14 +183,17 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback,GoogleMap.OnMarkerC
         val queue = Volley.newRequestQueue(this)
 
         val solicitud = StringRequest(Request.Method.GET, url, Response.Listener<String>{
-
                 response ->
             Log.d("HTTP",response)
 
             //METODO HA HACER
-
+                val  coordenadas=obtenerCoordenadas(response)
+            //Se actualiza la posoisción
+            if(nuevaruta!=null){
+                nuevaruta?.remove()
+            }
+               nuevaruta= mMap.addPolyline(coordenadas)
         }, Response.ErrorListener{})
-
         //añadir al quequue la solicitud
         queue.add(solicitud)
     }
